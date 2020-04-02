@@ -75,11 +75,16 @@ int main(int argc, char *argv[]) {
 
   printf("Server is listening on %d\n", port);
 
+  unsigned int counter = 1;
+
   while (1) {
-    for (int i = 0; i < MAX_CHILDREN; i++) {
-      if (child_pids[i] != 0)
+    for (int i = 0; i < MAX_CHILDREN && counter % (MAX_CHILDREN - 1) == 0; i++) {
+      if (child_pids[i] != 0) {
         wait(&child_pids[i]);
+        child_pids[i] = 0;
+      }
     }
+    counter++;
 
     socklen_t client_len = sizeof(client);
     client_fd = accept(server_fd, (struct sockaddr *)&client, &client_len);
